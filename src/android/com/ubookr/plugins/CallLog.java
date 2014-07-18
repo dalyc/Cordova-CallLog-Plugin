@@ -77,26 +77,22 @@ public class CallLog extends CordovaPlugin {
                 callLog.put("Rows", callLogItems);
             }
 
-
             callLogCursor.close();
         } catch (Exception e) {
-
             Log.d("CallLog_Plugin", " ERROR : SQL to get cursor: ERROR " + e.getMessage());
         }
-
 
         return callLog;
     }
 
     private JSONObject getTimeRangeCallLog(JSONArray requirements) {
+    }
 
-        private int getActionItem (String actionName)throws JSONException
-        {
-            JSONObject actions = new JSONObject("{'all':1,'last':2,'time':3}");
-            if (actions.has(actionName))
-                return actions.getInt(actionName);
+    private int getActionItem (String actionName)throws JSONException {
+        JSONObject actions = new JSONObject("{'all':1,'last':2,'time':3}");
+        if (actions.has(actionName))
+            return actions.getInt(actionName);
 
-            return 0;
-        }
+        return 0;
     }
 }
