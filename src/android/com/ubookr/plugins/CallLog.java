@@ -90,8 +90,8 @@ public class CallLog extends CordovaPlugin {
         return callLog;
     }
 
-    private JSONObject getTimeRangeCallLog(JSONArray requirements) {
-    }
+//    private JSONObject getTimeRangeCallLog(JSONArray requirements) {
+//    }
 
     private int getActionItem (String actionName)throws JSONException {
         JSONObject actions = new JSONObject("{'all':1,'last':2,'time':3}");
