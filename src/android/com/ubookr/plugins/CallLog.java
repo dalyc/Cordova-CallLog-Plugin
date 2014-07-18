@@ -1,6 +1,7 @@
 package com.ubookr.plugins;
 
 import android.util.Log;
+import android.database.Cursor;
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
 import org.json.JSONArray;
