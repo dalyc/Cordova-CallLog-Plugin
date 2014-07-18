@@ -6,6 +6,7 @@ import org.apache.cordova.CordovaPlugin;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.apache.cordova.PluginResult;
 
 public class CallLog extends CordovaPlugin {
 
@@ -18,14 +19,14 @@ public class CallLog extends CordovaPlugin {
             switch (getActionItem(actionName)) {
                 case 1:
                     callLogs = getAllCallLog(arguments);
-                    callbackContext.sendResult(new PluginResult(Status.OK, callLogs));
+                    callbackContext.sendResult(new PluginResult(PluginResult.Status.OK, callLogs));
                     return true;
                 default: {
-                    callbackContext.sendResult(new PluginResult(Status.INVALID_ACTION));
+                    callbackContext.sendResult(new PluginResult(PluginResult.Status.INVALID_ACTION));
                 }
             }
         } catch (JSONException jsonEx) {
-            callbackContext.sendResult(new PluginResult(Status.JSON_EXCEPTION));
+            callbackContext.sendResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
         }
 
         return false;
