@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        id="com.ubookr.plugins.calllog"
+        version="2.0">
+
+  <name>CallLog</name>
+
+  <description>
+    This plugin allows you to retrive the phone's call log.
+  </description>
+
+  <license>MIT</license>
+
+  <engines>
+    <engine name="cordova" version=">=3.0.0"/>
+  </engines>
+
+  <js-module src="www/CallLog.js" name="CallLog">
+    <clobbers target="window.plugins.calllog" />
+  </js-module>
+
+  <js-module src="test/tests.js" name="tests">
+  </js-module>
+
+  <!-- android -->
+  <platform name="android">
+
+    <config-file target="res/xml/config.xml" parent="/*">
+      <feature name="CallLog">
+        <param name="android-package" value="com.ubookr.plugins.CallLog" />
+      </feature>
+    </config-file>
+
+    <source-file src="src/android/com/ubookr/plugins/CallLog.java" target-dir="src/com/ubookr/plugins"/>
+  </platform>
+</plugin>
