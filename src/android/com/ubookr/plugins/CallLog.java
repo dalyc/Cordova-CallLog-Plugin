@@ -19,14 +19,14 @@ public class CallLog extends CordovaPlugin {
             switch (getActionItem(actionName)) {
                 case 1:
                     callLogs = getAllCallLog(arguments);
-                    callbackContext.sendResult(new PluginResult(PluginResult.Status.OK, callLogs));
+                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, callLogs));
                     return true;
                 default: {
-                    callbackContext.sendResult(new PluginResult(PluginResult.Status.INVALID_ACTION));
+                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.INVALID_ACTION));
                 }
             }
         } catch (JSONException jsonEx) {
-            callbackContext.sendResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
+            callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
         }
 
         return false;
