@@ -32,9 +32,9 @@ public class CallLogPlugin extends CordovaPlugin {
         PluginResult result;
 
         if (ACTION_CONTACT.equals(action)) {
-            result = contact(args);
+            contact(args, callbackContext);
         } else if (ACTION_SHOW.equals(action)) {
-            result = show(args);
+            show(args, callbackContext);
         } else if (ACTION_LIST.equals(action)) {
             result = list(args);
         } else {
@@ -45,76 +45,86 @@ public class CallLogPlugin extends CordovaPlugin {
         return true;
     }
 
-    private PluginResult show(JSONArray args) {
+    private void show(final JSONArray args, final CallbackContext callbackContext) {
 
-        PluginResult result;
-        try {
-            String phoneNumber = args.getString(0);
-            viewContact(phoneNumber);
-            result = new PluginResult(Status.OK);
-        } catch (JSONException e) {
-            Log.d(TAG, "Got JSON Exception " + e.getMessage());
-            result = new PluginResult(Status.JSON_EXCEPTION, e.getMessage());
-        } catch (Exception e) {
-            Log.d(TAG, "Got Exception " + e.getMessage());
-            result = new PluginResult(Status.ERROR, e.getMessage());
-        }
-        return result;
-    }
-
-    private PluginResult contact(JSONArray args) {
-
-        PluginResult result;
-        try {
-            String phoneNumber = args.getString(0);
-            String contactInfo = getContactNameFromNumber(phoneNumber);
-            Log.d(TAG, "Returning " + contactInfo);
-            result = new PluginResult(Status.OK, contactInfo);
-        } catch (JSONException e) {
-            Log.d(TAG, "Got JSON Exception " + e.getMessage());
-            result = new PluginResult(Status.JSON_EXCEPTION, e.getMessage());
-        } catch (Exception e) {
-            Log.d(TAG, "Got Exception " + e.getMessage());
-            result = new PluginResult(Status.ERROR, e.getMessage());
-        }
-        return result;
-    }
-
-    private PluginResult list(JSONArray args) {
-
-        PluginResult result;
-        try {
-
-            String limiter = null;
-            if ( ! args.isNull(0)) {
-                // make number positive in case caller give negative days
-                int days = Math.abs(Integer.valueOf(args.getString(0)));
-                Log.d(TAG, "Days is: " + days);
-                //turn this into a date
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(new Date());
-
-                calendar.add(Calendar.DAY_OF_YEAR, -days);
-                Date limitDate = calendar.getTime();
-                limiter = String.valueOf(limitDate.getTime());
+//        cordova.getThreadPool().execute(new Runnable() {
+        cordova.getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                PluginResult result;
+                try {
+                    String phoneNumber = args.getString(0);
+                    viewContact(phoneNumber);
+                    result = new PluginResult(Status.OK);
+                } catch (JSONException e) {
+                    Log.d(TAG, "Got JSON Exception " + e.getMessage());
+                    result = new PluginResult(Status.JSON_EXCEPTION, e.getMessage());
+                } catch (Exception e) {
+                    Log.d(TAG, "Got Exception " + e.getMessage());
+                    result = new PluginResult(Status.ERROR, e.getMessage());
+                }
+                callbackContext.sendPluginResult(result);
             }
+        });
+    }
 
-            //now do required search
-            JSONObject callLog = getCallLog(limiter);
-            Log.d(TAG, "Returning " + callLog.toString());
-            result = new PluginResult(Status.OK, callLog);
+    private void contact(final JSONArray args, final CallbackContext callbackContext) {
 
-        } catch (JSONException e) {
-            Log.d(TAG, "Got JSON Exception " + e.getMessage());
-            result = new PluginResult(Status.JSON_EXCEPTION, e.getMessage());
-        } catch (NumberFormatException e) {
-            Log.d(TAG, "Got NumberFormatException " + e.getMessage());
-            result = new PluginResult(Status.ERROR, "Non integer passed to list");
-        } catch (Exception e) {
-            Log.d(TAG, "Got Exception " + e.getMessage());
-            result = new PluginResult(Status.ERROR, e.getMessage());
-        }
-        return result;
+        cordova.getThreadPool().execute(new Runnable() {
+            public void run() {
+                PluginResult result;
+                try {
+                    final String phoneNumber = args.getString(0);
+                    String contactInfo = getContactNameFromNumber(phoneNumber);
+                    Log.d(TAG, "Returning " + contactInfo);
+                    result = new PluginResult(Status.OK, contactInfo));
+                } catch (JSONException e) {
+                    Log.d(TAG, "Got JSON Exception " + e.getMessage());
+                    result = new PluginResult(Status.JSON_EXCEPTION, e.getMessage()));
+                }
+                callbackContext.sendPluginResult(result);
+            }
+        });
+    }
+
+    private void list(final JSONArray args, final CallbackContext callbackContext) {
+
+        cordova.getThreadPool().execute(new Runnable() {
+            public void run() {
+                PluginResult result;
+                try {
+
+                    String limiter = null;
+                    if (!args.isNull(0)) {
+                        // make number positive in case caller give negative days
+                        int days = Math.abs(Integer.valueOf(args.getString(0)));
+                        Log.d(TAG, "Days is: " + days);
+                        //turn this into a date
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTime(new Date());
+
+                        calendar.add(Calendar.DAY_OF_YEAR, -days);
+                        Date limitDate = calendar.getTime();
+                        limiter = String.valueOf(limitDate.getTime());
+                    }
+
+                    //now do required search
+                    JSONObject callLog = getCallLog(limiter);
+                    Log.d(TAG, "Returning " + callLog.toString());
+                    result = new PluginResult(Status.OK, callLog);
+
+                } catch (JSONException e) {
+                    Log.d(TAG, "Got JSON Exception " + e.getMessage());
+                    result = new PluginResult(Status.JSON_EXCEPTION, e.getMessage());
+                } catch (NumberFormatException e) {
+                    Log.d(TAG, "Got NumberFormatException " + e.getMessage());
+                    result = new PluginResult(Status.ERROR, "Non integer passed to list");
+                } catch (Exception e) {
+                    Log.d(TAG, "Got Exception " + e.getMessage());
+                    result = new PluginResult(Status.ERROR, e.getMessage());
+                }
+                callbackContext.sendPluginResult(result);
+            }
+        });
     }
 
    	private void viewContact(String phoneNumber) {
