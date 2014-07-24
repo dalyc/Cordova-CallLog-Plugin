@@ -31,7 +31,8 @@ public class CallLog extends CordovaPlugin {
     private static final String TAG = "CallLogPlugin";
 
     @Override
-    public boolean execute(String action, JSONArray args, final CallbackContext callbackContext) throws JSONException {
+    public boolean execute(String action, JSONArray args, final CallbackContext callbackContext) {
+//    public boolean execute(String action, JSONArray args, final CallbackContext callbackContext) throws JSONException {
 
         Log.d(TAG, "Plugin Called");
         PluginResult result = null;
@@ -73,9 +74,6 @@ public class CallLog extends CordovaPlugin {
         try {
             viewContact(phoneNumber);
             result = new PluginResult(Status.OK);
-        } catch (JSONException e) {
-            Log.d(TAG, "Got JSON Exception " + e.getMessage());
-            result = new PluginResult(Status.JSON_EXCEPTION, e.getMessage());
         } catch (Exception e) {
             Log.d(TAG, "Got Exception " + e.getMessage());
             result = new PluginResult(Status.ERROR, e.getMessage());
@@ -90,8 +88,8 @@ public class CallLog extends CordovaPlugin {
             String contactInfo = getContactNameFromNumber(phoneNumber);
             Log.d(TAG, "Returning " + contactInfo.toString());
             result = new PluginResult(Status.OK, contactInfo);
-        } catch (JSONException e) {
-            Log.d(TAG, "Got JSON Exception " + e.getMessage());
+        } catch (Exception e) {
+            Log.d(TAG, "Got Exception " + e.getMessage());
             result = new PluginResult(Status.JSON_EXCEPTION, e.getMessage());
         }
         return result;
