@@ -2,15 +2,22 @@ package com.ubookr.plugins;
 
 import android.database.Cursor;
 import android.util.Log;
+import android.net.Uri;
+import android.content.Intent;
+import android.provider.ContactsContract.Contacts;
+
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.PluginResult;
+import org.apache.cordova.PluginResult.Status;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.Exception;
 import java.lang.String;
+import java.util.Calendar;
+import java.util.Date;
 
 public class CallLog extends CordovaPlugin {
 
@@ -31,9 +38,10 @@ public class CallLog extends CordovaPlugin {
             result = new PluginResult(PluginResult.Status.OK, all);
         } else if (ACTION_CONTACT.equals(action)) {
             String phoneNumber = args.getString(0);
-            this.contact(phoneNumber);
-        } else if (SHOW_ACTION.equals(action)) {
-            result = show();
+            result = contact(phoneNumber);
+        } else if (ACTION_SHOW.equals(action)) {
+            String phoneNumber = args.getString(0);
+            result = show(phoneNumber);
         } else if (ACTION_LIST.equals(action)) {
             int days = 1;
             //obtain date to limit by
@@ -45,9 +53,9 @@ public class CallLog extends CordovaPlugin {
                 else if (period.equals("month"))
                     days = 30;
                 else if (period.equals("all"))
-                    days = null;
+                    days = -1; // indicates no limit in list method below
             }
-            result = this.list(days);
+            result = list(days);
         } else {
             Log.d(TAG, "Invalid action : " + action + " passed");
             result = new PluginResult(Status.INVALID_ACTION);
@@ -90,12 +98,16 @@ public class CallLog extends CordovaPlugin {
 
         PluginResult result;
         try {
-            //turn this into a date
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(new Date());
-            calendar.add(Calendar.DAY_OF_YEAR, -days);
-            Date limitDate = calendar.getTime();
-            String limiter = String.valueOf(limitDate.getTime());
+            String limiter = null;
+            if (days > 0) {
+                //turn this into a date
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(new Date());
+
+                calendar.add(Calendar.DAY_OF_YEAR, -days);
+                Date limitDate = calendar.getTime();
+                limiter = String.valueOf(limitDate.getTime());
+            }
 
             //now do required search
             JSONObject callLog = getCallLog(limiter);
@@ -116,7 +128,7 @@ public class CallLog extends CordovaPlugin {
         this.cordova.getActivity().startActivity(i);
    	}
 
-    private JSONObject getCallLog(String dayLimit) throws JSONException {
+    private JSONObject getCallLog(String limiter) throws JSONException {
 
    		JSONObject callLog = new JSONObject();
 
@@ -134,8 +146,8 @@ public class CallLog extends CordovaPlugin {
             Cursor callLogCursor = this.cordova.getActivity().getContentResolver().query(
                     android.provider.CallLog.Calls.CONTENT_URI,
    					strFields,
-   					dayLimit == null ? null : CallLog.Calls.DATE + ">?",
-   	                dayLimit == null ? null : new String[] {dayLimit},
+   					limiter == null ? null : CallLog.Calls.DATE + ">?",
+   	                limiter == null ? null : new String[] {limiter},
    					android.provider.CallLog.Calls.DEFAULT_SORT_ORDER);
 
    			int callCount = callLogCursor.getCount();
