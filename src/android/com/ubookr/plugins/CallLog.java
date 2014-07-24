@@ -61,7 +61,7 @@ public class CallLog extends CordovaPlugin {
         PluginResult result;
         try {
             viewContact(phoneNumber);
-            result = new PluginResult.(Status.OK);
+            result = new PluginResult(Status.OK);
         } catch (JSONException e) {
             Log.d(TAG, "Got JSON Exception " + e.getMessage());
             result = new PluginResult(Status.JSON_EXCEPTION, e.getMessage());
