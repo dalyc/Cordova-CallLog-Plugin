@@ -17,15 +17,18 @@ public class CallLog extends CordovaPlugin {
         JSONObject callLogs = new JSONObject();
 
         try {
-            switch (getActionItem(actionName)) {
-                case 1:
-                    callLogs = getAllCallLog(arguments);
-                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, callLogs));
-                    return true;
-                default: {
-                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.INVALID_ACTION));
-                }
-            }
+            callLogs = getAllCallLog(arguments);
+            callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, callLogs));
+            return true;
+//            switch (getActionItem(actionName)) {
+//                case 1:
+//                    callLogs = getAllCallLog(arguments);
+//                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, callLogs));
+//                    return true;
+//                default: {
+//                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.INVALID_ACTION));
+//                }
+//            }
         } catch (JSONException jsonEx) {
             callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
         }
@@ -95,9 +98,9 @@ public class CallLog extends CordovaPlugin {
 
     private int getActionItem (String actionName)throws JSONException {
         JSONObject actions = new JSONObject("{'all':1,'last':2,'time':3}");
-        if (actions.has(actionName))
+        if (actions.has(actionName)) {
             return actions.getInt(actionName);
-
+        }
         return 0;
     }
 }
