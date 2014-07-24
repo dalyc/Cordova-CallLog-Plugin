@@ -6,7 +6,7 @@ CallLog.prototype.echo = function (message, successCallback, errorCallback) {
 };
 
 CallLog.prototype.all = function (successCallback, errorCallback) {
-  cordova.exec(successCallback, errorCallback, "CallLog", "all");
+  cordova.exec(successCallback, errorCallback, "CallLog", "all", []);
 };
 
 CallLog.install = function () {
