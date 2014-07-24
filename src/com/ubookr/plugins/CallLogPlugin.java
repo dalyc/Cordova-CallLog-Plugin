@@ -29,19 +29,17 @@ public class CallLogPlugin extends CordovaPlugin {
     public boolean execute(String action, JSONArray args, final CallbackContext callbackContext) {
 
         Log.d(TAG, "Plugin Called");
-        PluginResult result;
 
         if (ACTION_CONTACT.equals(action)) {
             contact(args, callbackContext);
         } else if (ACTION_SHOW.equals(action)) {
             show(args, callbackContext);
         } else if (ACTION_LIST.equals(action)) {
-            result = list(args);
+            list(args, callbackContext);
         } else {
             Log.d(TAG, "Invalid action : " + action + " passed");
-            result = new PluginResult(Status.INVALID_ACTION);
+            callbackContext.sendPluginResult(new PluginResult(Status.INVALID_ACTION));
         }
-        callbackContext.sendPluginResult(result);
         return true;
     }
 
