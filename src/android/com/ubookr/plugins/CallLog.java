@@ -4,7 +4,9 @@ import android.database.Cursor;
 import android.util.Log;
 import android.net.Uri;
 import android.content.Intent;
+import android.provider.CallLog;
 import android.provider.ContactsContract;
+import android.provider.ContactsContract.Phones;
 import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.Intents;
 
