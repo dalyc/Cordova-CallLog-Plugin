@@ -4,34 +4,38 @@
         id="com.ubookr.plugins.calllog"
         version="2.0">
 
-  <name>CallLog</name>
+    <name>CallLog</name>
 
-  <description>
-    This plugin allows you to retrive the phone's call log.
-  </description>
+    <description>
+        This plugin allows you to retrive the phone's call log.
+    </description>
 
-  <license>MIT</license>
+    <license>MIT</license>
 
-  <engines>
-    <engine name="cordova" version=">=3.0.0"/>
-  </engines>
+    <engines>
+        <engine name="cordova" version=">=3.0.0"/>
+    </engines>
 
-  <js-module src="www/CallLog.js" name="CallLog">
-    <clobbers target="window.plugins.calllog" />
-  </js-module>
+    <js-module src="www/CallLog.js" name="CallLog">
+        <clobbers target="window.plugins.calllog"/>
+    </js-module>
 
-  <js-module src="test/tests.js" name="tests">
-  </js-module>
+    <js-module src="test/tests.js" name="tests">
+    </js-module>
 
-  <!-- android -->
-  <platform name="android">
+    <!-- android -->
+    <platform name="android">
 
-    <config-file target="res/xml/config.xml" parent="/*">
-      <feature name="CallLog">
-        <param name="android-package" value="com.ubookr.plugins.CallLog" />
-      </feature>
-    </config-file>
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="CallLog">
+                <param name="android-package" value="com.ubookr.plugins.CallLog"/>
+            </feature>
+        </config-file>
 
-    <source-file src="src/android/com/ubookr/plugins/CallLog.java" target-dir="src/com/ubookr/plugins"/>
-  </platform>
+        <config-file target="AndroidManifest.xml" parent="/manifest">
+            <uses-permission android:name="android.permission.READ_CALL_LOG" />
+        </config-file>
+
+        <source-file src="src/android/com/ubookr/plugins/CallLog.java" target-dir="src/com/ubookr/plugins"/>
+    </platform>
 </plugin>
