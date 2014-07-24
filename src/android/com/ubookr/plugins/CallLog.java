@@ -51,7 +51,7 @@ public class CallLog extends CordovaPlugin {
 //        }
 //
 //        return false;
-    }
+//    }
 
 //    private JSONObject getAllCallLog(JSONArray requirements) throws JSONException {
 //        JSONObject callLog = new JSONObject();
