@@ -10,7 +10,7 @@ CallLog.prototype.all = function (successCallback, errorCallback) {
 };
 
 CallLog.prototype.contact = function (phoneNumber, successCallback, errorCallback) {
-  cordova.exec(successCallback, errorCallback, "CallLog", "all", [phoneNumber]);
+  cordova.exec(successCallback, errorCallback, "CallLog", "contact", [phoneNumber]);
 };
 
 CallLog.install = function () {
