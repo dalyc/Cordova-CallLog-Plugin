@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.util.Log;
 import android.net.Uri;
 import android.content.Intent;
+import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.Intents;
 
