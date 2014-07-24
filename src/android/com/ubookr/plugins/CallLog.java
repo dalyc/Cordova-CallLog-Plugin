@@ -4,7 +4,7 @@ import android.database.Cursor;
 import android.util.Log;
 import android.net.Uri;
 import android.content.Intent;
-import android.provider.ContactsContract.Contacts;
+import android.provider.ContactsContract;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
