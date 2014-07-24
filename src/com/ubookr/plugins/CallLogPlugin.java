@@ -85,21 +85,11 @@ public class CallLogPlugin extends CordovaPlugin {
         PluginResult result;
         try {
 
-            int days = 1; // default to a day
-            //obtain date to limit by
-            if ( ! args.isNull(0)) {
-                String period = args.getString(0);
-                Log.d(TAG, "Time period is: " + period);
-                if (period.equals("week"))
-                    days = 7;
-                else if (period.equals("month"))
-                    days = 30;
-                else if (period.equals("all"))
-                    days = -1;
-            }
-
             String limiter = null;
-            if (days > 0) {
+            if ( ! args.isNull(0)) {
+                // make number positive in case caller give negative days
+                int days = Math.abs(Integer.valueOf(args.getString(0)));
+                Log.d(TAG, "Days is: " + days);
                 //turn this into a date
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(new Date());
@@ -117,6 +107,9 @@ public class CallLogPlugin extends CordovaPlugin {
         } catch (JSONException e) {
             Log.d(TAG, "Got JSON Exception " + e.getMessage());
             result = new PluginResult(Status.JSON_EXCEPTION, e.getMessage());
+        } catch (NumberFormatException e) {
+            Log.d(TAG, "Got NumberFormatException " + e.getMessage());
+            result = new PluginResult(Status.ERROR, "Non integer passed to list");
         } catch (Exception e) {
             Log.d(TAG, "Got Exception " + e.getMessage());
             result = new PluginResult(Status.ERROR, e.getMessage());
