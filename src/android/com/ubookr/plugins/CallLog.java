@@ -71,7 +71,7 @@ public class CallLog extends CordovaPlugin {
         return result;
     }
 
-    private PluginResult contact(String phoneNumber) {
+    private PluginResult contact(JSONArray args) {
 
         PluginResult result;
         try {
