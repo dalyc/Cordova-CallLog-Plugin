@@ -1,13 +1,11 @@
 package com.ubookr.plugins;
 
-import android.database.Cursor;
-import android.util.Log;
-import android.net.Uri;
 import android.content.Intent;
-import android.provider.ContactsContract;
-import android.provider.ContactsContract.PhoneLookup;
-import android.provider.ContactsContract.Contacts;
+import android.database.Cursor;
+import android.net.Uri;
 import android.provider.ContactsContract.Intents;
+import android.provider.ContactsContract.PhoneLookup;
+import android.util.Log;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -17,14 +15,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.Exception;
-import java.lang.String;
 import java.util.Calendar;
 import java.util.Date;
 
-public class CallLog extends CordovaPlugin {
+public class CallLogPlugin extends CordovaPlugin {
 
-//    private static final String ACTION_ALL = "all";
     private static final String ACTION_LIST = "list";
     private static final String ACTION_CONTACT = "contact";
     private static final String ACTION_SHOW = "show";
@@ -32,14 +27,10 @@ public class CallLog extends CordovaPlugin {
 
     @Override
     public boolean execute(String action, JSONArray args, final CallbackContext callbackContext) {
-//    public boolean execute(String action, JSONArray args, final CallbackContext callbackContext) throws JSONException {
 
         Log.d(TAG, "Plugin Called");
-        PluginResult result = null;
+        PluginResult result;
 
-//        if (ACTION_ALL.equals(action)) {
-//            JSONObject all = getAllCallLog(args);
-//            result = new PluginResult(PluginResult.Status.OK, all);
         if (ACTION_CONTACT.equals(action)) {
             result = contact(args);
         } else if (ACTION_SHOW.equals(action)) {
@@ -77,7 +68,7 @@ public class CallLog extends CordovaPlugin {
         try {
             String phoneNumber = args.getString(0);
             String contactInfo = getContactNameFromNumber(phoneNumber);
-            Log.d(TAG, "Returning " + contactInfo.toString());
+            Log.d(TAG, "Returning " + contactInfo);
             result = new PluginResult(Status.OK, contactInfo);
         } catch (JSONException e) {
             Log.d(TAG, "Got JSON Exception " + e.getMessage());
@@ -135,7 +126,7 @@ public class CallLog extends CordovaPlugin {
 
    	private void viewContact(String phoneNumber) {
 
-        Intent i = new Intent(ContactsContract.Intents.SHOW_OR_CREATE_CONTACT,
+        Intent i = new Intent(Intents.SHOW_OR_CREATE_CONTACT,
                 Uri.parse(String.format("tel: %s", phoneNumber)));
         this.cordova.getActivity().startActivity(i);
    	}
@@ -214,94 +205,4 @@ public class CallLog extends CordovaPlugin {
         // return the original number if no match was found
         return number;
     }
-
-//        JSONObject callLogs = new JSONObject();
-//
-//        try {
-//            callLogs = getAllCallLog(args);
-//            callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, callLogs));
-//            return true;
-////            switch (getActionItem(actionName)) {
-////                case 1:
-////                    callLogs = getAllCallLog(arguments);
-////                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, callLogs));
-////                    return true;
-////                default: {
-////                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.INVALID_ACTION));
-////                }
-////            }
-//        } catch (JSONException e) {
-//            callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION, e.getMessage()));
-//        }
-//
-//        return false;
-//    }
-
-//    private JSONObject getAllCallLog(JSONArray requirements) throws JSONException {
-//        JSONObject callLog = new JSONObject();
-//
-//        String[] strFields = {
-//                android.provider.CallLog.Calls.DATE,
-//                android.provider.CallLog.Calls.NUMBER,
-//                android.provider.CallLog.Calls.TYPE,
-//                android.provider.CallLog.Calls.DURATION,
-//                android.provider.CallLog.Calls.NEW,
-//                android.provider.CallLog.Calls.CACHED_NAME,
-//                android.provider.CallLog.Calls.CACHED_NUMBER_TYPE,
-//                android.provider.CallLog.Calls.CACHED_NUMBER_LABEL//,
-//        };
-//
-//        try {
-//            Cursor callLogCursor = this.cordova.getActivity().getContentResolver().query(
-//                    android.provider.CallLog.Calls.CONTENT_URI,
-//                    strFields,
-//                    null,
-//                    null,
-//                    android.provider.CallLog.Calls.DEFAULT_SORT_ORDER
-//            );
-//
-//
-//            int callCount = callLogCursor.getCount();
-//
-//            if (callCount > 0) {
-//                JSONArray callLogItem = new JSONArray();
-//                JSONArray callLogItems = new JSONArray();
-//
-//                String[] columnNames = callLogCursor.getColumnNames();
-//
-//                callLogCursor.moveToFirst();
-//                do {
-//                    callLogItem.put(callLogCursor.getLong(0));
-//                    callLogItem.put(callLogCursor.getString(1));
-//                    callLogItem.put(callLogCursor.getInt(2));
-//                    callLogItem.put(callLogCursor.getLong(3));
-//                    callLogItem.put(callLogCursor.getInt(4));
-//                    callLogItem.put(callLogCursor.getString(5));
-//                    callLogItem.put(callLogCursor.getInt(6));
-//                    callLogItems.put(callLogItem);
-//                    callLogItem = new JSONArray();
-//
-//                } while (callLogCursor.moveToNext());
-//
-//                callLog.put("Rows", callLogItems);
-//            }
-//
-//            callLogCursor.close();
-//        } catch (Exception e) {
-//            Log.d("CallLog_Plugin", " ERROR : SQL to get cursor: ERROR " + e.getMessage());
-//        }
-//
-//        return callLog;
-//    }
-//
-////    private JSONObject getTimeRangeCallLog(JSONArray requirements) {
-////    }
-//
-//    private int getActionItem (String actionName)throws JSONException {
-//        JSONObject actions = new JSONObject("{'all':1,'last':2,'time':3}");
-//        if (actions.has(actionName)) {
-//            return actions.getInt(actionName);
-//        }
-//        return 0;
-//    }
 }
