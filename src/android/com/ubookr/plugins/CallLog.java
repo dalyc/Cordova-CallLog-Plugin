@@ -4,9 +4,8 @@ import android.database.Cursor;
 import android.util.Log;
 import android.net.Uri;
 import android.content.Intent;
-import android.provider.CallLog;
 import android.provider.ContactsContract;
-import android.provider.ContactsContract.Phones;
+import android.provider.ContactsContract.Contacts.Phones;
 import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.Intents;
 
@@ -150,7 +149,7 @@ public class CallLog extends CordovaPlugin {
             Cursor callLogCursor = this.cordova.getActivity().getContentResolver().query(
                     android.provider.CallLog.Calls.CONTENT_URI,
    					strFields,
-   					limiter == null ? null : CallLog.Calls.DATE + ">?",
+   					limiter == null ? null : android.provider.CallLog.Calls.DATE + ">?",
    	                limiter == null ? null : new String[] {limiter},
    					android.provider.CallLog.Calls.DEFAULT_SORT_ORDER);
 
