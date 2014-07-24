@@ -74,10 +74,10 @@ public class CallLogPlugin extends CordovaPlugin {
                     final String phoneNumber = args.getString(0);
                     String contactInfo = getContactNameFromNumber(phoneNumber);
                     Log.d(TAG, "Returning " + contactInfo);
-                    result = new PluginResult(Status.OK, contactInfo));
+                    result = new PluginResult(Status.OK, contactInfo);
                 } catch (JSONException e) {
                     Log.d(TAG, "Got JSON Exception " + e.getMessage());
-                    result = new PluginResult(Status.JSON_EXCEPTION, e.getMessage()));
+                    result = new PluginResult(Status.JSON_EXCEPTION, e.getMessage());
                 }
                 callbackContext.sendPluginResult(result);
             }
