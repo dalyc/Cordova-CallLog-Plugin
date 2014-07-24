@@ -23,7 +23,7 @@ public class CallLog extends CordovaPlugin {
             return true;
         } else if (action.equals("contact")) {
             try {
-                String contactInfo = getContactNameFromNumber(data.getString(0));
+                String contactInfo = getContactNameFromNumber(args.getString(0));
                 Log.d(TAG, "Returning " + contactInfo.toString());
                 result = new PluginResult(Status.OK, contactInfo);
             } catch (JSONException jsonEx) {
