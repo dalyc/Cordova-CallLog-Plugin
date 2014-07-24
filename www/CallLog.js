@@ -9,6 +9,10 @@ CallLog.prototype.all = function (successCallback, errorCallback) {
   cordova.exec(successCallback, errorCallback, "CallLog", "all", []);
 };
 
+CallLog.prototype.contact = function (phoneNumber, successCallback, errorCallback) {
+  cordova.exec(successCallback, errorCallback, "CallLog", "all", [phoneNumber]);
+};
+
 CallLog.install = function () {
   if (!window.plugins) {
     window.plugins = {};
