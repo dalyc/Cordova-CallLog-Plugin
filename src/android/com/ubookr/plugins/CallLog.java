@@ -268,7 +268,7 @@ public class CallLog extends CordovaPlugin {
         String[] projection = new String[]{PhoneLookup.DISPLAY_NAME};
 
         // encode the phone number and build the filter URI
-        Uri contactUri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URL, Uri.encode(number));
+        Uri contactUri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number));
 
         // query time
         Cursor c = this.cordova.getActivity().getContentResolver().query(contactUri, projection, null, null, null);
