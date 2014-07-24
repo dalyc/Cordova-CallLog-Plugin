@@ -5,7 +5,7 @@ import android.util.Log;
 import android.net.Uri;
 import android.content.Intent;
 import android.provider.ContactsContract;
-import android.provider.ContactsContract.Contacts.Phones;
+import android.provider.ContactsContract.PhoneLookup;
 import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.Intents;
 
@@ -265,10 +265,10 @@ public class CallLog extends CordovaPlugin {
     private String getContactNameFromNumber(String number) {
 
         // define the columns I want the query to return
-        String[] projection = new String[]{Contacts.Phones.DISPLAY_NAME, Contacts.Phones.NUMBER};
+        String[] projection = new String[]{PhoneLookup.DISPLAY_NAME};
 
         // encode the phone number and build the filter URI
-        Uri contactUri = Uri.withAppendedPath(Contacts.Phones.CONTENT_FILTER_URL, Uri.encode(number));
+        Uri contactUri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URL, Uri.encode(number));
 
         // query time
         Cursor c = this.cordova.getActivity().getContentResolver().query(contactUri, projection, null, null, null);
@@ -276,7 +276,7 @@ public class CallLog extends CordovaPlugin {
         // if the query returns 1 or more results
         // return the first result
         if (c.moveToFirst()) {
-            String name = c.getString(c.getColumnIndex(Contacts.Phones.DISPLAY_NAME));
+            String name = c.getString(c.getColumnIndex(PhoneLookup.DISPLAY_NAME));
             c.deactivate();
             return name;
         }
