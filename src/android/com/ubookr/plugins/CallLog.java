@@ -19,8 +19,7 @@ public class CallLog extends CordovaPlugin {
             this.echo(message, callbackContext);
             return true;
         } else if (action.equals("all")) {
-            callLogs = getAllCallLog(args);
-            callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, callLogs));
+            callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, getAllCallLog(args)));
             return true;
         }
 
