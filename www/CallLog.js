@@ -1,7 +1,7 @@
 function CallLog() {
 }
 
-CallLog.prototype.show = function (message, successCallback, errorCallback) {
+CallLog.prototype.echo = function (message, successCallback, errorCallback) {
   cordova.exec(successCallback, errorCallback, "CallLog", "echo", [message]);
 };
 
