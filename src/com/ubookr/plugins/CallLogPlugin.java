@@ -169,6 +169,7 @@ public class CallLogPlugin extends CordovaPlugin {
    					callLogItem.put("new", callLogCursor.getInt(4));
    					callLogItem.put("cachedName", callLogCursor.getString(5));
    					callLogItem.put("cachedNumberType", callLogCursor.getInt(6));
+   					callLogItem.put("cachedNumberLabel", callLogCursor.getInt(7));
    					//callLogItem.put("name", getContactNameFromNumber(callLogCursor.getString(1))); //grab name too
    					callLogItems.put(callLogItem);
    					callLogItem = new JSONObject();
