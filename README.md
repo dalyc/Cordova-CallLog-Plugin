@@ -7,6 +7,14 @@ Installation
 ============
   cordova plugins add "https://github.com/dalyc/Cordova-CallLog-Plugin"
   
+Permissions
+===========
+
+Add the following permissions to your AndroidManifest.xml
+
+    <uses-permission android:name="android.permission.READ_CALL_LOG" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
 Usage
 =====
 I've only used this in an Ionic application so this usage is AngularJS based.
