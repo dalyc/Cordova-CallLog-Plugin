@@ -12,6 +12,7 @@ Permissions
 
 Add the following permissions to your AndroidManifest.xml
 
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
 
