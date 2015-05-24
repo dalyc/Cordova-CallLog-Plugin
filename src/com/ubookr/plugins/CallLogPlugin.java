@@ -133,9 +133,7 @@ public class CallLogPlugin extends CordovaPlugin {
 	}
 
 	private JSONObject getCallLog(String limiter) throws JSONException {
-
 		JSONObject callLog = new JSONObject();
-
 		String[] strFields = {
 			android.provider.CallLog.Calls.DATE,
 			android.provider.CallLog.Calls.NUMBER,
@@ -146,44 +144,32 @@ public class CallLogPlugin extends CordovaPlugin {
 			android.provider.CallLog.Calls.CACHED_NUMBER_TYPE,
 			android.provider.CallLog.Calls.CACHED_NUMBER_LABEL
 		};
-
 		try {
 			Cursor callLogCursor = this.cordova.getActivity().getContentResolver().query(
-			android.provider.CallLog.Calls.CONTENT_URI,
-			strFields,
-			limiter == null ? null : android.provider.CallLog.Calls.DATE + ">?",
-			limiter == null ? null : new String[] {
-				limiter
-			},
-			android.provider.CallLog.Calls.DEFAULT_SORT_ORDER);
-
-			int callCount = callLogCursor.getCount();
-
+				android.provider.CallLog.Calls.CONTENT_URI,
+				strFields,
+				limiter == null ? null : android.provider.CallLog.Calls.DATE + ">?",
+				limiter == null ? null : new String[] {limiter},
+				android.provider.CallLog.Calls.DEFAULT_SORT_ORDER);
 			JSONArray callLogItems = new JSONArray();
-			if (callCount > 0) {
+			while (callLogCursor.moveToNext()) {
 				JSONObject callLogItem = new JSONObject();
-				callLogCursor.moveToFirst();
-				do {
-					callLogItem.put("date", callLogCursor.getLong(0));
-					callLogItem.put("number", callLogCursor.getString(1));
-					callLogItem.put("type", callLogCursor.getInt(2));
-					callLogItem.put("duration", callLogCursor.getLong(3));
-					callLogItem.put("new", callLogCursor.getInt(4));
-					callLogItem.put("cachedName", callLogCursor.getString(5));
-					callLogItem.put("cachedNumberType", callLogCursor.getInt(6));
-					callLogItem.put("cachedNumberLabel", callLogCursor.getInt(7));
-					//callLogItem.put("name", getContactNameFromNumber(callLogCursor.getString(1))); //grab name too
-					callLogItems.put(callLogItem);
-					callLogItem = new JSONObject();
-				} while (callLogCursor.moveToNext());
+				callLogItem.put("date", callLogCursor.getLong(0));
+				callLogItem.put("number", callLogCursor.getString(1));
+				callLogItem.put("type", callLogCursor.getInt(2));
+				callLogItem.put("duration", callLogCursor.getLong(3));
+				callLogItem.put("new", callLogCursor.getInt(4));
+				callLogItem.put("cachedName", callLogCursor.getString(5));
+				callLogItem.put("cachedNumberType", callLogCursor.getInt(6));
+				callLogItem.put("cachedNumberLabel", callLogCursor.getInt(7));
+				//callLogItem.put("name", getContactNameFromNumber(callLogCursor.getString(1))); //grab name too
+				callLogItems.put(callLogItem);
 			}
+			callLogCursor.close();
 			callLog.put("rows", callLogItems);
 		} catch (Exception e) {
 			Log.d(TAG, "Error while pulling phone records " + e.getMessage());
-		} finally {
-			callLogCursor.close();
 		}
-
 		return callLog;
 	}
 
