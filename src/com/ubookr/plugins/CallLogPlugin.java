@@ -144,14 +144,14 @@ public class CallLogPlugin extends CordovaPlugin {
 			android.provider.CallLog.Calls.CACHED_NUMBER_TYPE,
 			android.provider.CallLog.Calls.CACHED_NUMBER_LABEL
 		};
-		try {
-			Cursor callLogCursor = this.cordova.getActivity().getContentResolver().query(
-				android.provider.CallLog.Calls.CONTENT_URI,
-				strFields,
-				limiter == null ? null : android.provider.CallLog.Calls.DATE + ">?",
-				limiter == null ? null : new String[] {limiter},
-				android.provider.CallLog.Calls.DEFAULT_SORT_ORDER);
-			JSONArray callLogItems = new JSONArray();
+		Cursor callLogCursor = this.cordova.getActivity().getContentResolver().query(
+			android.provider.CallLog.Calls.CONTENT_URI,
+			strFields,
+			limiter == null ? null : android.provider.CallLog.Calls.DATE + ">?",
+			limiter == null ? null : new String[] {limiter},
+			android.provider.CallLog.Calls.DEFAULT_SORT_ORDER);
+		JSONArray callLogItems = new JSONArray();
+		if (callLogCursor != null) {
 			while (callLogCursor.moveToNext()) {
 				JSONObject callLogItem = new JSONObject();
 				callLogItem.put("date", callLogCursor.getLong(0));
@@ -166,10 +166,8 @@ public class CallLogPlugin extends CordovaPlugin {
 				callLogItems.put(callLogItem);
 			}
 			callLogCursor.close();
-			callLog.put("rows", callLogItems);
-		} catch (Exception e) {
-			Log.d(TAG, "Error while pulling phone records " + e.getMessage());
 		}
+		callLog.put("rows", callLogItems);
 		return callLog;
 	}
 
