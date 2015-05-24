@@ -105,7 +105,7 @@ public class CallLogPlugin extends CordovaPlugin {
                         limiter = String.valueOf(limitDate.getTime());
                     }
 
-                    //now do required search
+                    // Do required search
                     JSONObject callLog = getCallLog(limiter);
                     Log.d(TAG, "Returning " + callLog.toString());
                     result = new PluginResult(Status.OK, callLog);
@@ -156,10 +156,9 @@ public class CallLogPlugin extends CordovaPlugin {
 
    			int callCount = callLogCursor.getCount();
 
+            JSONArray callLogItems = new JSONArray();
    			if (callCount > 0) {
    				JSONObject callLogItem = new JSONObject();
-   				JSONArray callLogItems = new JSONArray();
-
    				callLogCursor.moveToFirst();
    				do {
    					callLogItem.put("date", callLogCursor.getLong(0));
@@ -174,12 +173,11 @@ public class CallLogPlugin extends CordovaPlugin {
    					callLogItems.put(callLogItem);
    					callLogItem = new JSONObject();
    				} while (callLogCursor.moveToNext());
-   				callLog.put("rows", callLogItems);
    			}
-
+   			callLog.put("rows", callLogItems);
    			callLogCursor.close();
    		} catch (Exception e) {
-   			Log.d("CallLog_Plugin", " ERROR : SQL to get cursor: ERROR " + e.getMessage());
+   			Log.d(TAG, "ERROR : SQL to get cursor: ERROR " + e.getMessage());
    		}
 
    		return callLog;
