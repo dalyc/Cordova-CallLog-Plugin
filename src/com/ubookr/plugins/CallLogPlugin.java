@@ -178,9 +178,10 @@ public class CallLogPlugin extends CordovaPlugin {
 				} while (callLogCursor.moveToNext());
 			}
 			callLog.put("rows", callLogItems);
-			callLogCursor.close();
 		} catch (Exception e) {
-			Log.d(TAG, "ERROR : SQL to get cursor: ERROR " + e.getMessage());
+			Log.d(TAG, "Error while pulling phone records " + e.getMessage());
+		} finally {
+			callLogCursor.close();
 		}
 
 		return callLog;
