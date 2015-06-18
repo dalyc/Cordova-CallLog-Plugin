@@ -54,6 +54,16 @@ Here is my CallLogService accessing the plugin (window.plugins.calllog)
                 });
                 return q.promise;
             }
+
+            delete : function(phoneNumber) {
+                var q = $q.defer();
+                window.plugins.calllog.delete(id, function (response) {
+                    q.resolve(response);
+                }, function (error) {
+                    q.reject(error)
+                });
+                return q.promise;
+            }
         }
     }])
 
