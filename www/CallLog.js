@@ -13,6 +13,10 @@ CallLog.prototype.show = function (phoneNumber, successCallback, errorCallback) 
   cordova.exec(successCallback, errorCallback, "CallLog", "show", [phoneNumber]);
 };
 
+CallLog.prototype.delete = function (id, successCallback, errorCallback) {
+  cordova.exec(successCallback, errorCallback, "CallLog", "delete", [id]);
+};
+
 CallLog.install = function () {
   if (!window.plugins) {
     window.plugins = {};
