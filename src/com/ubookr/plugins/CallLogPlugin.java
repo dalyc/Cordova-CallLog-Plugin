@@ -23,6 +23,7 @@ public class CallLogPlugin extends CordovaPlugin {
     private static final String ACTION_LIST = "list";
     private static final String ACTION_CONTACT = "contact";
     private static final String ACTION_SHOW = "show";
+    private static final String ACTION_DELETE = "delete";
     private static final String TAG = "CallLogPlugin";
 
     @Override
@@ -36,6 +37,8 @@ public class CallLogPlugin extends CordovaPlugin {
             show(args, callbackContext);
         } else if (ACTION_LIST.equals(action)) {
             list(args, callbackContext);
+        } else if (ACTION_DELETE.equals(action)) {
+            delete(args, callbackContext);
         } else {
             Log.d(TAG, "Invalid action : " + action + " passed");
             callbackContext.sendPluginResult(new PluginResult(Status.INVALID_ACTION));
@@ -116,6 +119,34 @@ public class CallLogPlugin extends CordovaPlugin {
                 } catch (NumberFormatException e) {
                     Log.d(TAG, "Got NumberFormatException " + e.getMessage());
                     result = new PluginResult(Status.ERROR, "Non integer passed to list");
+                } catch (Exception e) {
+                    Log.d(TAG, "Got Exception " + e.getMessage());
+                    result = new PluginResult(Status.ERROR, e.getMessage());
+                }
+                callbackContext.sendPluginResult(result);
+            }
+        });
+    }
+
+    private void delete(final JSONArray args, final CallbackContext callbackContext) {
+
+        cordova.getThreadPool().execute(new Runnable() {
+            public void run() {
+                PluginResult result;
+                try {
+
+                    int result = this.cordova.getActivity().getContentResolver().delete(
+                            android.provider.CallLog.Calls.CONTENT_URI, "_ID = " + args.getString(0), null);
+                    if (res == 1) {
+                        result = new PluginResult(Status.OK, res);
+
+                    } else {
+                        result = new PluginResult(Status.ERROR, res);
+                    }
+
+                } catch (JSONException e) {
+                    Log.d(TAG, "Got JSON Exception " + e.getMessage());
+                    result = new PluginResult(Status.JSON_EXCEPTION, e.getMessage());
                 } catch (Exception e) {
                     Log.d(TAG, "Got Exception " + e.getMessage());
                     result = new PluginResult(Status.ERROR, e.getMessage());
