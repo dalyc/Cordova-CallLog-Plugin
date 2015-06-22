@@ -135,7 +135,7 @@ public class CallLogPlugin extends CordovaPlugin {
                 PluginResult result;
                 try {
 
-                    int result = this.cordova.getActivity().getContentResolver().delete(
+                    int res = CallLogPlugin.this.cordova.getActivity().getContentResolver().delete(
                             android.provider.CallLog.Calls.CONTENT_URI, "_ID = " + args.getString(0), null);
                     if (res == 1) {
                         result = new PluginResult(Status.OK, res);
