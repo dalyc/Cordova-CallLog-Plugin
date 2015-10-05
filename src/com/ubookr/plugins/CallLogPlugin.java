@@ -128,7 +128,7 @@ public class CallLogPlugin extends CordovaPlugin {
 	private void viewContact(String phoneNumber) {
 
 		Intent i = new Intent(Intents.SHOW_OR_CREATE_CONTACT,
-		Uri.parse(String.format("tel: %s", phoneNumber)));
+		                      Uri.parse(String.format("tel: %s", phoneNumber)));
 		this.cordova.getActivity().startActivity(i);
 	}
 
@@ -145,11 +145,11 @@ public class CallLogPlugin extends CordovaPlugin {
 			android.provider.CallLog.Calls.CACHED_NUMBER_LABEL
 		};
 		Cursor callLogCursor = this.cordova.getActivity().getContentResolver().query(
-			android.provider.CallLog.Calls.CONTENT_URI,
-			strFields,
-			limiter == null ? null : android.provider.CallLog.Calls.DATE + ">?",
-			limiter == null ? null : new String[] {limiter},
-			android.provider.CallLog.Calls.DEFAULT_SORT_ORDER);
+		                         android.provider.CallLog.Calls.CONTENT_URI,
+		                         strFields,
+		                         limiter == null ? null : android.provider.CallLog.Calls.DATE + ">?",
+		                         limiter == null ? null : new String[] {limiter},
+		                         android.provider.CallLog.Calls.DEFAULT_SORT_ORDER);
 		JSONArray callLogItems = new JSONArray();
 		if (callLogCursor != null) {
 			while (callLogCursor.moveToNext()) {
@@ -175,7 +175,7 @@ public class CallLogPlugin extends CordovaPlugin {
 
 		// define the columns I want the query to return
 		String[] projection = new String[] {
-			PhoneLookup.DISPLAY_NAME
+		  PhoneLookup.DISPLAY_NAME
 		};
 
 		// encode the phone number and build the filter URI
