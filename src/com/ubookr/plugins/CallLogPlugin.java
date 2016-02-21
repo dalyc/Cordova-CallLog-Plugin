@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.provider.ContactsContract.Intents;
 import android.provider.ContactsContract.PhoneLookup;
 import android.util.Log;
+import android.content.pm.PackageManager;
+import static android.Manifest.permission.READ_CALL_LOG;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -14,7 +16,6 @@ import org.apache.cordova.PluginResult.Status;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import static android.Manifest.permission.READ_CALL_LOG;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -25,13 +26,15 @@ public class CallLogPlugin extends CordovaPlugin {
   private static final String ACTION_CONTACT = "contact";
   private static final String ACTION_SHOW = "show";
   private static final String TAG = "CallLogPlugin";
+  // Permission request stuff.
   private static final int READ_CALL_LOG_REQ_CODE = 0;
+  private static final String PERMISSION_DENIED_ERROR = "User refused to give permissions for reading call log";
   // Exec arguments.
   private CallbackContext callbackContext;
   private JSONArray args;
-  private string action;
+  private String action;
 
-  public static final String READ_CALL_LOG = Manifest.permission.READ_CALL_LOG;
+  public static final String READ_CALL_LOG = android.Manifest.permission.READ_CALL_LOG;
 
   @Override
   public boolean execute(String action, JSONArray args, final CallbackContext callbackContext) {
@@ -43,7 +46,7 @@ public class CallLogPlugin extends CordovaPlugin {
     this.callbackContext = callbackContext;
 
     if (cordova.hasPermission(READ_CALL_LOG)) {
-    executeHelper();
+      executeHelper();
       return true;
     } else {
       cordova.requestPermission(this, READ_CALL_LOG_REQ_CODE, READ_CALL_LOG);
@@ -52,6 +55,7 @@ public class CallLogPlugin extends CordovaPlugin {
   }
 
   private void executeHelper() {
+    Log.d(TAG, "Plugin Called with action " + action);
     if (ACTION_CONTACT.equals(action)) {
       contact();
     } else if (ACTION_SHOW.equals(action)) {
@@ -75,7 +79,6 @@ public class CallLogPlugin extends CordovaPlugin {
 
   }
 
-  @Override
   public void onRequestPermissionsResult(int requestCode,
                                          String permissions[], int[] grantResults) {
     if (requestCode == READ_CALL_LOG_REQ_CODE &&
