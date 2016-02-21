@@ -5,16 +5,7 @@ Android only (help with IOS welcome) cordova plugin to access the call history o
 
 Installation 
 ============
-  cordova plugins add "https://github.com/dalyc/Cordova-CallLog-Plugin"
-  
-Permissions
-===========
-
-Add the following permissions to your AndroidManifest.xml
-
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_CALL_LOG" />
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
+  cordova plugins add "https://github.com/uriva/CallLogPlugin"
 
 Usage
 =====
