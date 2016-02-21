@@ -42,7 +42,7 @@ public class CallLogPlugin extends CordovaPlugin {
     this.args = args;
     this.callbackContext = callbackContext;
 
-    if (cordova.hasPermission(READ_CALL_LOG) {
+    if (cordova.hasPermission(READ_CALL_LOG)) {
     executeHelper();
       return true;
     } else {
@@ -82,7 +82,7 @@ public class CallLogPlugin extends CordovaPlugin {
         // If request is cancelled, the result arrays are empty.
         grantResults.length > 0 &&
         grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-      executeHelper()
+      executeHelper();
     }
   }
 
