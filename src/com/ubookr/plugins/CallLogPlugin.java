@@ -14,185 +14,227 @@ import org.apache.cordova.PluginResult.Status;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import static android.Manifest.permission.READ_CALL_LOG;
 
 import java.util.Calendar;
 import java.util.Date;
 
 public class CallLogPlugin extends CordovaPlugin {
 
-	private static final String ACTION_LIST = "list";
-	private static final String ACTION_CONTACT = "contact";
-	private static final String ACTION_SHOW = "show";
-	private static final String TAG = "CallLogPlugin";
+  private static final String ACTION_LIST = "list";
+  private static final String ACTION_CONTACT = "contact";
+  private static final String ACTION_SHOW = "show";
+  private static final String TAG = "CallLogPlugin";
+  private static final int READ_CALL_LOG_REQ_CODE = 0;
+  // Exec arguments.
+  private CallbackContext callbackContext;
+  private JSONArray args;
+  private string action;
 
-	@Override
-	public boolean execute(String action, JSONArray args, final CallbackContext callbackContext) {
+  public static final String READ_CALL_LOG = Manifest.permission.READ_CALL_LOG;
 
-		Log.d(TAG, "Plugin Called");
+  @Override
+  public boolean execute(String action, JSONArray args, final CallbackContext callbackContext) {
 
-		if (ACTION_CONTACT.equals(action)) {
-			contact(args, callbackContext);
-		} else if (ACTION_SHOW.equals(action)) {
-			show(args, callbackContext);
-		} else if (ACTION_LIST.equals(action)) {
-			list(args, callbackContext);
-		} else {
-			Log.d(TAG, "Invalid action : " + action + " passed");
-			callbackContext.sendPluginResult(new PluginResult(Status.INVALID_ACTION));
-		}
-		return true;
-	}
+    Log.d(TAG, "Plugin Called");
 
-	private void show(final JSONArray args, final CallbackContext callbackContext) {
+    this.action = action;
+    this.args = args;
+    this.callbackContext = callbackContext;
 
-		//        cordova.getThreadPool().execute(new Runnable() {
-		cordova.getActivity().runOnUiThread(new Runnable() {
-			public void run() {
-				PluginResult result;
-				try {
-					String phoneNumber = args.getString(0);
-					viewContact(phoneNumber);
-					result = new PluginResult(Status.OK);
-				} catch (JSONException e) {
-					Log.d(TAG, "Got JSON Exception " + e.getMessage());
-					result = new PluginResult(Status.JSON_EXCEPTION, e.getMessage());
-				} catch (Exception e) {
-					Log.d(TAG, "Got Exception " + e.getMessage());
-					result = new PluginResult(Status.ERROR, e.getMessage());
-				}
-				callbackContext.sendPluginResult(result);
-			}
-		});
-	}
+    if (cordova.hasPermission(READ_CALL_LOG) {
+    executeHelper();
+      return true;
+    } else {
+      cordova.requestPermission(this, READ_CALL_LOG_REQ_CODE, READ_CALL_LOG);
+      return false;
+    }
+  }
 
-	private void contact(final JSONArray args, final CallbackContext callbackContext) {
+  private void executeHelper() {
+    if (ACTION_CONTACT.equals(action)) {
+      contact();
+    } else if (ACTION_SHOW.equals(action)) {
+      show();
+    } else if (ACTION_LIST.equals(action)) {
+      list();
+    } else {
+      Log.d(TAG, "Invalid action : " + action + " passed");
+      callbackContext.sendPluginResult(new PluginResult(Status.INVALID_ACTION));
+    }
+  }
 
-		cordova.getThreadPool().execute(new Runnable() {
-			public void run() {
-				PluginResult result;
-				try {
-					final String phoneNumber = args.getString(0);
-					String contactInfo = getContactNameFromNumber(phoneNumber);
-					Log.d(TAG, "Returning " + contactInfo);
-					result = new PluginResult(Status.OK, contactInfo);
-				} catch (JSONException e) {
-					Log.d(TAG, "Got JSON Exception " + e.getMessage());
-					result = new PluginResult(Status.JSON_EXCEPTION, e.getMessage());
-				}
-				callbackContext.sendPluginResult(result);
-			}
-		});
-	}
+  public void onRequestPermissionResult(int requestCode, String[] permissions,
+                                        int[] grantResults) throws JSONException {
+    for (int r : grantResults) {
+      if (r == PackageManager.PERMISSION_DENIED) {
+        callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, PERMISSION_DENIED_ERROR));
+        return;
+      }
+    }
 
-	private void list(final JSONArray args, final CallbackContext callbackContext) {
+  }
 
-		cordova.getThreadPool().execute(new Runnable() {
-			public void run() {
-				PluginResult result;
-				try {
+  @Override
+  public void onRequestPermissionsResult(int requestCode,
+                                         String permissions[], int[] grantResults) {
+    if (requestCode == READ_CALL_LOG_REQ_CODE &&
+        // If request is cancelled, the result arrays are empty.
+        grantResults.length > 0 &&
+        grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+      executeHelper()
+    }
+  }
 
-					String limiter = null;
-					if (!args.isNull(0)) {
-						// make number positive in case caller give negative days
-						int days = Math.abs(Integer.valueOf(args.getString(0)));
-						Log.d(TAG, "Days is: " + days);
-						//turn this into a date
-						Calendar calendar = Calendar.getInstance();
-						calendar.setTime(new Date());
+  private void show() {
+    //        cordova.getThreadPool().execute(new Runnable() {
+    cordova.getActivity().runOnUiThread(new Runnable() {
+      public void run() {
+        PluginResult result;
+        try {
+          String phoneNumber = args.getString(0);
+          viewContact(phoneNumber);
+          result = new PluginResult(Status.OK);
+        } catch (JSONException e) {
+          Log.d(TAG, "Got JSON Exception " + e.getMessage());
+          result = new PluginResult(Status.JSON_EXCEPTION, e.getMessage());
+        } catch (Exception e) {
+          Log.d(TAG, "Got Exception " + e.getMessage());
+          result = new PluginResult(Status.ERROR, e.getMessage());
+        }
+        callbackContext.sendPluginResult(result);
+      }
+    });
+  }
 
-						calendar.add(Calendar.DAY_OF_YEAR, -days);
-						Date limitDate = calendar.getTime();
-						limiter = String.valueOf(limitDate.getTime());
-					}
+  private void contact() {
+    cordova.getThreadPool().execute(new Runnable() {
+      public void run() {
+        PluginResult result;
+        try {
+          final String phoneNumber = args.getString(0);
+          String contactInfo = getContactNameFromNumber(phoneNumber);
+          Log.d(TAG, "Returning " + contactInfo);
+          result = new PluginResult(Status.OK, contactInfo);
+        } catch (JSONException e) {
+          Log.d(TAG, "Got JSON Exception " + e.getMessage());
+          result = new PluginResult(Status.JSON_EXCEPTION, e.getMessage());
+        }
+        callbackContext.sendPluginResult(result);
+      }
+    });
+  }
 
-					// Do required search
-					JSONObject callLog = getCallLog(limiter);
-					Log.d(TAG, "Returning " + callLog.toString());
-					result = new PluginResult(Status.OK, callLog);
+  private void list() {
 
-				} catch (JSONException e) {
-					Log.d(TAG, "Got JSON Exception " + e.getMessage());
-					result = new PluginResult(Status.JSON_EXCEPTION, e.getMessage());
-				} catch (NumberFormatException e) {
-					Log.d(TAG, "Got NumberFormatException " + e.getMessage());
-					result = new PluginResult(Status.ERROR, "Non integer passed to list");
-				} catch (Exception e) {
-					Log.d(TAG, "Got Exception " + e.getMessage());
-					result = new PluginResult(Status.ERROR, e.getMessage());
-				}
-				callbackContext.sendPluginResult(result);
-			}
-		});
-	}
+    cordova.getThreadPool().execute(new Runnable() {
+      public void run() {
+        PluginResult result;
+        try {
 
-	private void viewContact(String phoneNumber) {
+          String limiter = null;
+          if (!args.isNull(0)) {
+            // make number positive in case caller give negative days
+            int days = Math.abs(Integer.valueOf(args.getString(0)));
+            Log.d(TAG, "Days is: " + days);
+            //turn this into a date
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(new Date());
 
-		Intent i = new Intent(Intents.SHOW_OR_CREATE_CONTACT,
-		                      Uri.parse(String.format("tel: %s", phoneNumber)));
-		this.cordova.getActivity().startActivity(i);
-	}
+            calendar.add(Calendar.DAY_OF_YEAR, -days);
+            Date limitDate = calendar.getTime();
+            limiter = String.valueOf(limitDate.getTime());
+          }
 
-	private JSONObject getCallLog(String limiter) throws JSONException {
-		JSONObject callLog = new JSONObject();
-		String[] strFields = {
-			android.provider.CallLog.Calls.DATE,
-			android.provider.CallLog.Calls.NUMBER,
-			android.provider.CallLog.Calls.TYPE,
-			android.provider.CallLog.Calls.DURATION,
-			android.provider.CallLog.Calls.NEW,
-			android.provider.CallLog.Calls.CACHED_NAME,
-			android.provider.CallLog.Calls.CACHED_NUMBER_TYPE,
-			android.provider.CallLog.Calls.CACHED_NUMBER_LABEL
-		};
-		Cursor callLogCursor = this.cordova.getActivity().getContentResolver().query(
-		                         android.provider.CallLog.Calls.CONTENT_URI,
-		                         strFields,
-		                         limiter == null ? null : android.provider.CallLog.Calls.DATE + ">?",
-		                         limiter == null ? null : new String[] {limiter},
-		                         android.provider.CallLog.Calls.DEFAULT_SORT_ORDER);
-		JSONArray callLogItems = new JSONArray();
-		if (callLogCursor != null) {
-			while (callLogCursor.moveToNext()) {
-				JSONObject callLogItem = new JSONObject();
-				callLogItem.put("date", callLogCursor.getLong(0));
-				callLogItem.put("number", callLogCursor.getString(1));
-				callLogItem.put("type", callLogCursor.getInt(2));
-				callLogItem.put("duration", callLogCursor.getLong(3));
-				callLogItem.put("new", callLogCursor.getInt(4));
-				callLogItem.put("cachedName", callLogCursor.getString(5));
-				callLogItem.put("cachedNumberType", callLogCursor.getInt(6));
-				callLogItem.put("cachedNumberLabel", callLogCursor.getInt(7));
-				//callLogItem.put("name", getContactNameFromNumber(callLogCursor.getString(1))); //grab name too
-				callLogItems.put(callLogItem);
-			}
-			callLogCursor.close();
-		}
-		callLog.put("rows", callLogItems);
-		return callLog;
-	}
+          // Do required search
+          JSONObject callLog = getCallLog(limiter);
+          Log.d(TAG, "Returning " + callLog.toString());
+          result = new PluginResult(Status.OK, callLog);
 
-	private String getContactNameFromNumber(String number) {
+        } catch (JSONException e) {
+          Log.d(TAG, "Got JSON Exception " + e.getMessage());
+          result = new PluginResult(Status.JSON_EXCEPTION, e.getMessage());
+        } catch (NumberFormatException e) {
+          Log.d(TAG, "Got NumberFormatException " + e.getMessage());
+          result = new PluginResult(Status.ERROR, "Non integer passed to list");
+        } catch (Exception e) {
+          Log.d(TAG, "Got Exception " + e.getMessage());
+          result = new PluginResult(Status.ERROR, e.getMessage());
+        }
+        callbackContext.sendPluginResult(result);
+      }
+    });
+  }
 
-		// define the columns I want the query to return
-		String[] projection = new String[] {
-		  PhoneLookup.DISPLAY_NAME
-		};
+  private void viewContact(String phoneNumber) {
 
-		// encode the phone number and build the filter URI
-		Uri contactUri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number));
+    Intent i = new Intent(Intents.SHOW_OR_CREATE_CONTACT,
+                          Uri.parse(String.format("tel: %s", phoneNumber)));
+    cordova.getActivity().startActivity(i);
+  }
 
-		// query time
-		Cursor c = this.cordova.getActivity().getContentResolver().query(contactUri, projection, null, null, null);
+  private JSONObject getCallLog(String limiter) throws JSONException {
+    JSONObject callLog = new JSONObject();
+    String[] strFields = {
+      android.provider.CallLog.Calls.DATE,
+      android.provider.CallLog.Calls.NUMBER,
+      android.provider.CallLog.Calls.TYPE,
+      android.provider.CallLog.Calls.DURATION,
+      android.provider.CallLog.Calls.NEW,
+      android.provider.CallLog.Calls.CACHED_NAME,
+      android.provider.CallLog.Calls.CACHED_NUMBER_TYPE,
+      android.provider.CallLog.Calls.CACHED_NUMBER_LABEL
+    };
+    Cursor callLogCursor = cordova.getActivity().getContentResolver().query(
+                             android.provider.CallLog.Calls.CONTENT_URI,
+                             strFields,
+                             limiter == null ? null : android.provider.CallLog.Calls.DATE + ">?",
+                             limiter == null ? null : new String[] {limiter},
+                             android.provider.CallLog.Calls.DEFAULT_SORT_ORDER);
+    JSONArray callLogItems = new JSONArray();
+    if (callLogCursor != null) {
+      while (callLogCursor.moveToNext()) {
+        JSONObject callLogItem = new JSONObject();
+        callLogItem.put("date", callLogCursor.getLong(0));
+        callLogItem.put("number", callLogCursor.getString(1));
+        callLogItem.put("type", callLogCursor.getInt(2));
+        callLogItem.put("duration", callLogCursor.getLong(3));
+        callLogItem.put("new", callLogCursor.getInt(4));
+        callLogItem.put("cachedName", callLogCursor.getString(5));
+        callLogItem.put("cachedNumberType", callLogCursor.getInt(6));
+        callLogItem.put("cachedNumberLabel", callLogCursor.getInt(7));
+        //callLogItem.put("name", getContactNameFromNumber(callLogCursor.getString(1))); //grab name too
+        callLogItems.put(callLogItem);
+      }
+      callLogCursor.close();
+    }
+    callLog.put("rows", callLogItems);
+    return callLog;
+  }
 
-		// if the query returns 1 or more results
-		// return the first result
-		if (c.moveToFirst()) {
-			String name = c.getString(c.getColumnIndex(PhoneLookup.DISPLAY_NAME));
-			c.deactivate();
-			return name;
-		}
+  private String getContactNameFromNumber(String number) {
 
-		// return the original number if no match was found
-		return number;
-	}
+    // define the columns I want the query to return
+    String[] projection = new String[] {
+      PhoneLookup.DISPLAY_NAME
+    };
+
+    // encode the phone number and build the filter URI
+    Uri contactUri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number));
+
+    // query time
+    Cursor c = cordova.getActivity().getContentResolver().query(contactUri, projection, null, null, null);
+
+    // if the query returns 1 or more results
+    // return the first result
+    if (c.moveToFirst()) {
+      String name = c.getString(c.getColumnIndex(PhoneLookup.DISPLAY_NAME));
+      c.deactivate();
+      return name;
+    }
+
+    // return the original number if no match was found
+    return number;
+  }
+
 }
