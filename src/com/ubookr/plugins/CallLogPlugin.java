@@ -28,34 +28,39 @@ public class CallLogPlugin extends CordovaPlugin {
   private static final String TAG = "CallLogPlugin";
   // Permission request stuff.
   private static final int READ_CALL_LOG_REQ_CODE = 0;
-  private static final String PERMISSION_DENIED_ERROR = "User refused to give permissions for reading call log";
+  private static final String PERMISSION_DENIED_ERROR =
+    "User refused to give permissions for reading call log";
   // Exec arguments.
   private CallbackContext callbackContext;
   private JSONArray args;
   private String action;
 
-  public static final String READ_CALL_LOG = android.Manifest.permission.READ_CALL_LOG;
+  public static final String READ_CALL_LOG =
+    android.Manifest.permission.READ_CALL_LOG;
 
   @Override
-  public boolean execute(String action, JSONArray args, final CallbackContext callbackContext) {
+  public boolean execute(String action, JSONArray args,
+                         final CallbackContext callbackContext) {
 
-    Log.d(TAG, "Plugin Called");
+    Log.d(TAG, "execute called");
 
     this.action = action;
     this.args = args;
     this.callbackContext = callbackContext;
 
     if (cordova.hasPermission(READ_CALL_LOG)) {
+      Log.d(TAG, "Permission available");
       executeHelper();
-      return true;
     } else {
-      cordova.requestPermission(this, READ_CALL_LOG_REQ_CODE, READ_CALL_LOG);
-      return false;
+      Log.d(TAG, "No permissions, will request");
+      cordova.requestPermission(this, READ_CALL_LOG_REQ_CODE,
+                                READ_CALL_LOG);
     }
+    return true;
   }
 
   private void executeHelper() {
-    Log.d(TAG, "Plugin Called with action " + action);
+    Log.d(TAG, "executeHelper with action " + action);
     if (ACTION_CONTACT.equals(action)) {
       contact();
     } else if (ACTION_SHOW.equals(action)) {
@@ -63,16 +68,21 @@ public class CallLogPlugin extends CordovaPlugin {
     } else if (ACTION_LIST.equals(action)) {
       list();
     } else {
-      Log.d(TAG, "Invalid action : " + action + " passed");
-      callbackContext.sendPluginResult(new PluginResult(Status.INVALID_ACTION));
+      Log.d(TAG, "Invalid action: " + action + " passed");
+      callbackContext.sendPluginResult(
+        new PluginResult(Status.INVALID_ACTION));
     }
   }
 
-  public void onRequestPermissionResult(int requestCode, String[] permissions,
-                                        int[] grantResults) throws JSONException {
+  public void onRequestPermissionResult(
+    int requestCode, String[] permissions,
+    int[] grantResults) throws JSONException {
     for (int r : grantResults) {
       if (r == PackageManager.PERMISSION_DENIED) {
-        callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, PERMISSION_DENIED_ERROR));
+        Log.d(TAG, "Permission denied");
+        callbackContext.sendPluginResult(
+          new PluginResult(PluginResult.Status.ERROR,
+                           PERMISSION_DENIED_ERROR));
         return;
       }
     }
@@ -80,7 +90,8 @@ public class CallLogPlugin extends CordovaPlugin {
   }
 
   public void onRequestPermissionsResult(int requestCode,
-                                         String permissions[], int[] grantResults) {
+                                         String permissions[],
+                                         int[] grantResults) {
     if (requestCode == READ_CALL_LOG_REQ_CODE &&
         // If request is cancelled, the result arrays are empty.
         grantResults.length > 0 &&
@@ -111,6 +122,8 @@ public class CallLogPlugin extends CordovaPlugin {
   }
 
   private void contact() {
+    // TODO: this code path needs to ask user for permission, currently
+    // it does not.
     cordova.getThreadPool().execute(new Runnable() {
       public void run() {
         PluginResult result;
@@ -134,7 +147,6 @@ public class CallLogPlugin extends CordovaPlugin {
       public void run() {
         PluginResult result;
         try {
-
           String limiter = null;
           if (!args.isNull(0)) {
             // make number positive in case caller give negative days
@@ -143,7 +155,6 @@ public class CallLogPlugin extends CordovaPlugin {
             //turn this into a date
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(new Date());
-
             calendar.add(Calendar.DAY_OF_YEAR, -days);
             Date limitDate = calendar.getTime();
             limiter = String.valueOf(limitDate.getTime());
@@ -216,7 +227,6 @@ public class CallLogPlugin extends CordovaPlugin {
   }
 
   private String getContactNameFromNumber(String number) {
-
     // define the columns I want the query to return
     String[] projection = new String[] {
       PhoneLookup.DISPLAY_NAME
