@@ -89,17 +89,6 @@ public class CallLogPlugin extends CordovaPlugin {
     executeHelper();
   }
 
-  public void onRequestPermissionsResult(int requestCode,
-                                         String permissions[],
-                                         int[] grantResults) {
-    if (requestCode == READ_CALL_LOG_REQ_CODE &&
-        // If request is cancelled, the result arrays are empty.
-        grantResults.length > 0 &&
-        grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-      executeHelper();
-    }
-  }
-
   private void show() {
     //        cordova.getThreadPool().execute(new Runnable() {
     cordova.getActivity().runOnUiThread(new Runnable() {
@@ -142,7 +131,6 @@ public class CallLogPlugin extends CordovaPlugin {
   }
 
   private void list() {
-
     cordova.getThreadPool().execute(new Runnable() {
       public void run() {
         PluginResult result;
@@ -159,12 +147,10 @@ public class CallLogPlugin extends CordovaPlugin {
             Date limitDate = calendar.getTime();
             limiter = String.valueOf(limitDate.getTime());
           }
-
           // Do required search
           JSONObject callLog = getCallLog(limiter);
           Log.d(TAG, "Returning " + callLog.toString());
           result = new PluginResult(Status.OK, callLog);
-
         } catch (JSONException e) {
           Log.d(TAG, "Got JSON Exception " + e.getMessage());
           result = new PluginResult(Status.JSON_EXCEPTION, e.getMessage());
