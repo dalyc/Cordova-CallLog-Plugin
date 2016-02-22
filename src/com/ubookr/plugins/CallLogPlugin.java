@@ -80,12 +80,13 @@ public class CallLogPlugin extends CordovaPlugin {
     for (int r : grantResults) {
       if (r == PackageManager.PERMISSION_DENIED) {
         Log.d(TAG, "Permission denied");
+        callbackContext.sendPluginResult(
+          new PluginResult(PluginResult.Status.ERROR,
+                           PERMISSION_DENIED_ERROR));
         return;
       }
     }
-    callbackContext.sendPluginResult(
-        new PluginResult(PluginResult.Status.ERROR,
-                         PERMISSION_DENIED_ERROR));
+    executeHelper();
   }
 
   public void onRequestPermissionsResult(int requestCode,
