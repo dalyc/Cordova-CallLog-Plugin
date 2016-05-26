@@ -1,5 +1,6 @@
 package com.ubookr.plugins;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -24,6 +25,7 @@ public class CallLogPlugin extends CordovaPlugin {
     private static final String ACTION_CONTACT = "contact";
     private static final String ACTION_SHOW = "show";
     private static final String ACTION_DELETE = "delete";
+    private static final String ACTION_INSERT = "insert";
     private static final String TAG = "CallLogPlugin";
 
     @Override
@@ -39,6 +41,8 @@ public class CallLogPlugin extends CordovaPlugin {
             list(args, callbackContext);
         } else if (ACTION_DELETE.equals(action)) {
             delete(args, callbackContext);
+        } else if (ACTION_INSERT.equals(action)) {
+            insert(args, callbackContext);
         } else {
             Log.d(TAG, "Invalid action : " + action + " passed");
             callbackContext.sendPluginResult(new PluginResult(Status.INVALID_ACTION));
@@ -154,6 +158,42 @@ public class CallLogPlugin extends CordovaPlugin {
                 callbackContext.sendPluginResult(result);
             }
         });
+    }
+
+    private void insert(final JSONArray args,final CallbackContext callbackContext) {
+      cordova.getThreadPool().execute(new Runnable() {
+        public void run() {
+          PluginResult result;
+          ContentValues values = new ContentValues();
+          Uri uri;
+
+          try {
+            values.put(android.provider.CallLog.Calls.NUMBER, args.getString(0));
+            values.put(android.provider.CallLog.Calls.DATE, System.currentTimeMillis());
+            values.put(android.provider.CallLog.Calls.DURATION, args.getInt(1));
+            values.put(android.provider.CallLog.Calls.TYPE, android.provider.CallLog.Calls.OUTGOING_TYPE);
+            values.put(android.provider.CallLog.Calls.NEW, 1);
+            values.put(android.provider.CallLog.Calls.CACHED_NAME, "");
+            values.put(android.provider.CallLog.Calls.CACHED_NUMBER_TYPE, 0);
+            values.put(android.provider.CallLog.Calls.CACHED_NUMBER_LABEL, "");
+
+            uri = CallLogPlugin.this.cordova.getActivity().getContentResolver().insert(android.provider.CallLog.Calls.CONTENT_URI, values);
+
+            result = new PluginResult(Status.OK, uri.toString());
+
+          }
+          catch (JSONException e) {
+            Log.d(TAG, "Got JSON Exception " + e.getMessage());
+            result = new PluginResult(Status.JSON_EXCEPTION, e.getMessage());
+          }
+          catch (Exception e) {
+            Log.d(TAG, "Got Exception " + e.getMessage());
+            result = new PluginResult(Status.ERROR, e.getMessage());
+          }
+
+          callbackContext.sendPluginResult(result);
+        }
+      });
     }
 
    	private void viewContact(String phoneNumber) {
