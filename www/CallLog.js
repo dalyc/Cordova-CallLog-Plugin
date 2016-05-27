@@ -17,6 +17,10 @@ CallLog.prototype.delete = function (id, successCallback, errorCallback) {
   cordova.exec(successCallback, errorCallback, "CallLog", "delete", [id]);
 };
 
+CallLog.prototype.insert = function (args, successCallback, errorCallback) {
+  cordova.exec(successCallback, errorCallback, "CallLog", "insert", args);
+};
+
 CallLog.install = function () {
   if (!window.plugins) {
     window.plugins = {};
