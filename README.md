@@ -136,7 +136,7 @@ Note that I also have a decorator in app.js to allow my app to continue working 
               date: 1406720317112,
               duration: 2224,
               new: 1,
-              number: '0420884679',
+              number: '0428889999',
               type: 1
             };
             return $q.when([lastCall]);
