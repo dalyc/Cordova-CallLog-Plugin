@@ -31,6 +31,7 @@ public class CallLogPlugin extends CordovaPlugin {
     private static final String TAG = "CallLogPlugin";
     // Permission request stuff.
     private static final int READ_CALL_LOG_REQ_CODE = 0;
+    private static final int WRITE_CALL_LOG_REQ_CODE = 0;
     private static final String PERMISSION_DENIED_ERROR =
         "User refused to give permissions for reading call log";
     // Exec arguments.
@@ -40,6 +41,8 @@ public class CallLogPlugin extends CordovaPlugin {
 
     public static final String READ_CALL_LOG =
         android.Manifest.permission.READ_CALL_LOG;
+    public static final String WRITE_CALL_LOG =
+        android.Manifest.permission.WRITE_CALL_LOG;
 
     @Override
     public boolean execute(String action, JSONArray args,
@@ -51,13 +54,15 @@ public class CallLogPlugin extends CordovaPlugin {
         this.args = args;
         this.callbackContext = callbackContext;
 
-        if (cordova.hasPermission(READ_CALL_LOG)) {
+        if (cordova.hasPermission(READ_CALL_LOG) && cordova.hasPermission(WRITE_CALL_LOG)) {
             Log.d(TAG, "Permission available");
             executeHelper();
         } else {
             Log.d(TAG, "No permissions, will request");
             cordova.requestPermission(this, READ_CALL_LOG_REQ_CODE,
                     READ_CALL_LOG);
+            cordova.requestPermission(this, WRITE_CALL_LOG_REQ_CODE,
+                    WRITE_CALL_LOG);
         }
         return true;
     }
@@ -255,7 +260,9 @@ public class CallLogPlugin extends CordovaPlugin {
             android.provider.CallLog.Calls.NEW,
             android.provider.CallLog.Calls.CACHED_NAME,
             android.provider.CallLog.Calls.CACHED_NUMBER_TYPE,
-            android.provider.CallLog.Calls.CACHED_NUMBER_LABEL };
+            android.provider.CallLog.Calls.CACHED_NUMBER_LABEL,
+            android.provider.CallLog.Calls._ID
+        };
 
         try {
             Cursor callLogCursor = this.cordova.getActivity().getContentResolver().query(
@@ -281,6 +288,7 @@ public class CallLogPlugin extends CordovaPlugin {
                     callLogItem.put("cachedName", callLogCursor.getString(5));
                     callLogItem.put("cachedNumberType", callLogCursor.getInt(6));
                     callLogItem.put("cachedNumberLabel", callLogCursor.getInt(7));
+                    callLogItem.put("_id", callLogCursor.getString(8));
                     //callLogItem.put("name", getContactNameFromNumber(callLogCursor.getString(1))); //grab name too
                     callLogItems.put(callLogItem);
                     callLogItem = new JSONObject();
