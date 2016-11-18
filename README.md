@@ -3,9 +3,9 @@ Cordova-CallLog-Plugin
 
 Android only (help with IOS welcome) cordova plugin to access the call history on a device.
 
-Installation 
+Installation
 ============
-  cordova plugins add "https://github.com/uriva/CallLogPlugin"
+  cordova plugins add "https://github.com/dalyc/Cordova-CallLog-Plugin"
 
 Usage
 =====
